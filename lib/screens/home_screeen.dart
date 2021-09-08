@@ -4,10 +4,12 @@ import 'package:whatsapp_ui_clone/screens/calls_screen.dart';
 import 'package:whatsapp_ui_clone/screens/camera_screen.dart';
 import 'package:whatsapp_ui_clone/screens/chat_screen.dart';
 import 'package:whatsapp_ui_clone/screens/status_screen.dart';
+import 'package:camera/camera.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key, required this.firstCamera}) : super(key: key);
   static final String routeName = "/homescreen";
+  final firstCamera;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -19,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 4, vsync: this, initialIndex: 1);
   }
@@ -31,31 +32,25 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    final double tabWidth = width / 5;
     return Scaffold(
       appBar: AppBar(
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
           labelColor: CustomColors.outlineColor,
           unselectedLabelColor: Colors.white,
           indicator: UnderlineTabIndicator(
             borderSide: BorderSide(width: 3, color: CustomColors.outlineColor),
           ),
           tabs: [
-            Container(
-              width: 30,
-              child: Tab(
-                child: Icon(Icons.camera_alt),
-              ),
-            ),
             Tab(
-              child: Text("CHATS"),
+              child: Icon(Icons.camera_alt),
             ),
-            Tab(
-              child: Text("STATUS"),
-            ),
-            Tab(
-              child: Text("CALLS"),
-            )
+            customTab(tabWidth, Text("CHATS")),
+            customTab(tabWidth, Text("STATUS")),
+            customTab(tabWidth, Text("CALLS")),
           ],
         ),
         title: Text(
@@ -79,7 +74,9 @@ class _HomeScreenState extends State<HomeScreen>
             color: CustomColors.bgColor,
             onSelected: (item) => onSelected(item),
             itemBuilder: (context) {
-              if (_tabController.index == 1) {
+              if (_tabController.index == 0) {
+                return [createCustomPopMenuItem(4, "Settings")];
+              } else if (_tabController.index == 1) {
                 return [
                   createCustomPopMenuItem(0, "New group"),
                   createCustomPopMenuItem(1, "New boradcoast"),
@@ -105,11 +102,21 @@ class _HomeScreenState extends State<HomeScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          CameraScreen(),
+          CameraScreen(camera: widget.firstCamera),
           ChatScreen(),
           StatusScreen(),
           CallsScreen(),
         ],
+      ),
+    );
+  }
+
+  Tab customTab(double tabWidth, Text text) {
+    return Tab(
+      child: Container(
+        alignment: Alignment.center,
+        width: tabWidth,
+        child: text,
       ),
     );
   }
