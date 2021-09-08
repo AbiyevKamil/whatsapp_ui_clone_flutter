@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
-import 'package:torch_controller/torch_controller.dart';
 
 class CameraScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -19,7 +16,6 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-  TorchController _torchController = TorchController();
   bool isActive = false;
   @override
   void initState() {
@@ -69,25 +65,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 InkWell(
-                                  onTap: () async {
-                                    try {
-                                      bool? hasTorch =
-                                          await _torchController.hasTorch;
-                                      if (hasTorch != null) {
-                                        if (hasTorch) {
-                                          bool? isActiveLocal =
-                                              await _torchController
-                                                  .isTorchActive;
-                                          isActiveLocal != null
-                                              ? isActive = isActiveLocal
-                                              : isActive = false;
-                                          _torchController.toggle();
-                                        }
-                                      }
-                                    } catch (err) {
-                                      print(err.toString());
-                                    }
-                                  },
+                                  onTap: () {},
                                   child: Icon(
                                     isActive ? Icons.flash_off : Icons.flash_on,
                                     color: Colors.white,
